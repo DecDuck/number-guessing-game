@@ -2,7 +2,7 @@
 {
     internal class Program
     {
-        static readonly string[] brackets =
+        static readonly string[] Brackets =
         {
             "Frozen!",
             "Wintery",
@@ -21,15 +21,15 @@
             "Boiling!",
         };
 
-        const int MIN_VALUE = 0;
-        const int MAX_VALUE = 100;
+        const int MinValue = 0;
+        const int MaxValue = 1000;
 
-        static void Main(string[] args)
+        static void Main()
         {
             Random random = new Random();
             while (true)
             {
-                Play(random.Next(MIN_VALUE, MAX_VALUE), MIN_VALUE, MAX_VALUE);
+                Play(random.Next(MinValue, MaxValue), MinValue, MaxValue);
                 Console.Write("Play again? (y/n) ");
                 if (!"Yyes".Contains(Console.ReadLine()))
                 {
@@ -40,11 +40,10 @@
 
         static void Play(int answer, int lowerBounds, int upperBounds)
         {
-            int guess;
             while (true)
             {
                 Console.Write("What is your guess? ");
-                if (!int.TryParse(Console.ReadLine(), out guess))
+                if (!int.TryParse(Console.ReadLine(), out var guess))
                 {
                     Console.WriteLine("Invalid guess!");
                     continue;
@@ -56,8 +55,8 @@
                 // Calculate how close we were
                 float closeness = 1 - ((float) Math.Abs(answer - guess) / (upperBounds - lowerBounds));
                 // Otherwise, fetch the relevant entry
-                int entryIndex = Math.Clamp((int) Math.Round(closeness * (brackets.Length-1)), 0, brackets.Length-1);
-                Console.WriteLine("You are: {0} ({1}%)", brackets[entryIndex], Math.Floor(closeness * 100));
+                int entryIndex = Math.Clamp((int) Math.Round(closeness * (Brackets.Length-1)), 0, Brackets.Length-1);
+                Console.WriteLine("You are: {0} ({1}%)", Brackets[entryIndex], Math.Floor(closeness * 100 * MaxValue) / MaxValue);
             }
             Console.WriteLine("Yay! You got it!");
         }
