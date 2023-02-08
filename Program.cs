@@ -1,6 +1,6 @@
 ﻿namespace NumberGuessingGame
 {
-    internal class Program
+    internal abstract class Program
     {
         static readonly string[] Brackets =
         {
@@ -31,7 +31,7 @@
             {
                 Play(random.Next(MinValue, MaxValue), MinValue, MaxValue);
                 Console.Write("Play again? (y/n) ");
-                if (!"Yyes".Contains(Console.ReadLine()))
+                if (!"Yyes".Contains(Console.ReadLine() ?? string.Empty))
                 {
                     break;
                 }
@@ -54,7 +54,7 @@
                 }
                 // Calculate how close we were
                 float closeness = 1 - ((float) Math.Abs(answer - guess) / (upperBounds - lowerBounds));
-                // Otherwise, fetch the relevant entry
+                // Fetch the relevant entry
                 int entryIndex = Math.Clamp((int) Math.Round(closeness * (Brackets.Length-1)), 0, Brackets.Length-1);
                 Console.WriteLine("You are: {0} ({1}%)", Brackets[entryIndex], Math.Floor(closeness * 100 * MaxValue) / MaxValue);
             }
