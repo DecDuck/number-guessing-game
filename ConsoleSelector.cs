@@ -1,6 +1,6 @@
 namespace NumberGuessingGame;
 
-public class ConsoleSelector
+public abstract class ConsoleSelector
 {
     // Expects an empty console
     public static int Select(string[] options)
@@ -32,7 +32,6 @@ public class ConsoleSelector
 
     static void RenderOptions(string[] options, int selected, int longestOptionLength)
     {
-        Console.WriteLine("Select option");
         for (int i = 0; i < options.Length; i++)
         {
             if (selected == i)
@@ -48,7 +47,7 @@ public class ConsoleSelector
             Console.WriteLine(" ({0}) {1}{2}", i + 1, options[i], new String(' ', longestOptionLength - options[i].Length));
         }
 
-        Console.CursorTop -= 1 + options.Length;
+        Console.CursorTop -= options.Length;
         Console.ResetColor();
     }
 }

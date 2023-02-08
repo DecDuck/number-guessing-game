@@ -4,14 +4,15 @@
     {
         static readonly string[] Brackets =
         {
+            "The f*cking Artic circle.",
             "Frozen!",
             "Wintery",
             "Frigid",
             "Very Cold",
             "Cold",
             "Chilly",
-            "Brisk",
             "Numbing",
+            "Brisk",
             "Nippy",
             "Toasty",
             "Warm",
@@ -19,12 +20,10 @@
             "Hot",
             "Very Hot",
             "Boiling!",
+            "The surface of the f*cking sun.",
         };
 
-        static Random _random = new Random();
-
-        const int MinValue = 0;
-        const int MaxValue = 100;
+        static readonly Random Random = new();
 
         static void Main()
         {
@@ -32,12 +31,13 @@
             {
                 MainMenu();
             }
+            // ReSharper disable once FunctionNeverReturns
         }
 
         static void MainMenu()
         {
             Console.WriteLine("Welcome to DecDuck's Number Guessing Game!");
-            int i = ConsoleSelector.Select(new string[]
+            int i = ConsoleSelector.Select(new[]
             {
                 "Play",
                 "Options",
@@ -47,7 +47,7 @@
             {
                 case 0:
                     Console.Clear();
-                    Play(_random.Next(MinValue, MaxValue), MinValue, MaxValue);
+                    Play(Random.Next(Settings.MinValue, Settings.MaxValue), Settings.MinValue, Settings.MaxValue);
                     break;
                 case 1:
                     OptionsMenu();
@@ -62,22 +62,37 @@
         {
             while (true)
             {
+                Console.WriteLine("Options:");
                 string[] options =
                 {
                     "Difficulty: " + Settings.Difficulty,
+                    "Range: " + Settings.MinValue + "-" + Settings.MaxValue,
                     "Exit"
                 };
                 int i = ConsoleSelector.Select(options);
                 switch (i)
                 {
                     case 0:
-                        Settings.Difficulty = (Settings.DifficultyEnum) ConsoleSelector.Select(Enum.GetNames(typeof(Settings.DifficultyEnum)));
+                        Settings.Difficulty =
+                            (Settings.DifficultyEnum)ConsoleSelector.Select(
+                                Enum.GetNames(typeof(Settings.DifficultyEnum)));
+                        break;
+                    case 1:
+                        int[][] rangeOptions =
+                        {
+                            new[] { 0, 10 },
+                            new[] { 0, 100 },
+                            new[] { 0, 1000 }
+                        };
+                        int[] range =
+                            rangeOptions[ConsoleSelector.Select(rangeOptions.Select(e => e[0] + "-" + e[1]).ToArray())];
+                        Settings.MinValue = range[0];
+                        Settings.MaxValue = range[1];
                         break;
                     default:
                         return;
                 }
             }
-            
         }
 
         static void Play(int answer, int lowerBounds, int upperBounds)
@@ -90,17 +105,27 @@
                     Console.WriteLine("Invalid guess!");
                     continue;
                 }
+
                 if (guess == answer)
                 {
                     break;
                 }
+
                 // Calculate how close we were
-                float closeness = 1 - ((float) Math.Abs(answer - guess) / (upperBounds - lowerBounds));
+                float closeness = 1 - (float)Math.Abs(answer - guess) / (upperBounds - lowerBounds);
                 // Fetch the relevant entry
-                int entryIndex = Math.Clamp((int) Math.Round(closeness * (Brackets.Length-1)), 0, Brackets.Length-1);
-                Console.WriteLine("You are: {0} ({1}%)", Brackets[entryIndex], Math.Floor(closeness * 100 * MaxValue) / MaxValue);
+                int entryIndex = Math.Clamp((int)Math.Round(closeness * (Brackets.Length - 1)), 0, Brackets.Length - 1);
+                Console.WriteLine("You are: " + Brackets[entryIndex] + " " +
+                                  ("("+ (Brackets.Length - 1 - entryIndex) + " levels away from guessing it)"),
+                                  (Settings.Difficulty <= Settings.DifficultyEnum.Easy
+                                    ? "(" + (answer > guess ? "Lower" : "Higher") + ")"
+                                    : "") +
+                                  (Settings.Difficulty <= Settings.DifficultyEnum.Normal
+                                      ? "(" + Math.Floor(closeness * 100 * Settings.MaxValue) / Settings.MaxValue + ") "
+                                      : ""));
             }
-            Console.WriteLine("Yay! You got it!");
+
+            Console.WriteLine("Yay! You got it! The answer was: "+ answer);
         }
     }
 }
