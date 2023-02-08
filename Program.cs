@@ -21,21 +21,63 @@
             "Boiling!",
         };
 
+        static Random _random = new Random();
+
         const int MinValue = 0;
-        const int MaxValue = 1000;
+        const int MaxValue = 100;
 
         static void Main()
         {
-            Random random = new Random();
             while (true)
             {
-                Play(random.Next(MinValue, MaxValue), MinValue, MaxValue);
-                Console.Write("Play again? (y/n) ");
-                if (!"Yyes".Contains(Console.ReadLine() ?? string.Empty))
-                {
+                MainMenu();
+            }
+        }
+
+        static void MainMenu()
+        {
+            Console.WriteLine("Welcome to DecDuck's Number Guessing Game!");
+            int i = ConsoleSelector.Select(new string[]
+            {
+                "Play",
+                "Options",
+                "Quit"
+            });
+            switch (i)
+            {
+                case 0:
+                    Console.Clear();
+                    Play(_random.Next(MinValue, MaxValue), MinValue, MaxValue);
                     break;
+                case 1:
+                    OptionsMenu();
+                    break;
+                case 2:
+                    Environment.Exit(0);
+                    break;
+            }
+        }
+
+        static void OptionsMenu()
+        {
+            while (true)
+            {
+                string[] options =
+                {
+                    "Difficulty: " + Settings.Difficulty,
+                    "Exit"
+                };
+                int i = ConsoleSelector.Select(options);
+                switch (i)
+                {
+                    case 0:
+                        Settings.Difficulty = (Settings.DifficultyEnum) ConsoleSelector.Select(Enum.GetNames(typeof(Settings.DifficultyEnum)));
+                        break;
+                    default:
+                        return;
                 }
             }
+            
         }
 
         static void Play(int answer, int lowerBounds, int upperBounds)
