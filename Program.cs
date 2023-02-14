@@ -1,4 +1,5 @@
 ﻿namespace NumberGuessingGame
+
 {
     internal abstract class Program
     {
@@ -100,7 +101,20 @@
             while (true)
             {
                 Console.Write("What is your guess? ");
-                if (!int.TryParse(Console.ReadLine(), out var guess))
+                string input = "";
+                ConsoleKeyInfo key;
+                while((key = Console.ReadKey(true)).Key != ConsoleKey.Enter)
+                {
+                    if (key.Key == ConsoleKey.End)
+                    {
+                        Console.Clear();
+                        return;
+                    }
+                    input += key.KeyChar;
+                    Console.Write(key.KeyChar);
+                }
+                Console.WriteLine();
+                if (!int.TryParse(input, out var guess))
                 {
                     Console.WriteLine("Invalid guess!");
                     continue;
@@ -116,12 +130,12 @@
                 // Fetch the relevant entry
                 int entryIndex = Math.Clamp((int)Math.Round(closeness * (Brackets.Length - 1)), 0, Brackets.Length - 1);
                 Console.WriteLine("You are: " + Brackets[entryIndex] + " " +
-                                  ("("+ (Brackets.Length - 1 - entryIndex) + " levels away from guessing it)"),
+                                  ("("+ (Brackets.Length - 1 - entryIndex) + " levels away from guessing it)") +
                                   (Settings.Difficulty <= Settings.DifficultyEnum.Easy
-                                    ? "(" + (answer > guess ? "Lower" : "Higher") + ")"
+                                    ? " (" + (answer > guess ? "Higher" : "Lower") + ")"
                                     : "") +
                                   (Settings.Difficulty <= Settings.DifficultyEnum.Normal
-                                      ? "(" + Math.Floor(closeness * 100 * Settings.MaxValue) / Settings.MaxValue + ") "
+                                      ? " (" + Math.Floor(closeness * 100 * Settings.MaxValue) / Settings.MaxValue + "% closeness) "
                                       : ""));
             }
 
